@@ -17,6 +17,11 @@ class ReqHandler(webapp.RequestHandler):
         })
         status, headers, output = apphandler(os.environ)
 
+        if status == 301:
+            self.redirect(headers["Location"], permanent=True)
+        elif status == 302 or status == 307:
+            self.redirect(headers["Location"])
+
         # status
         self.response.set_status(status)
 
