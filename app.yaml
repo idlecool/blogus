@@ -5,22 +5,7 @@ api_version: 1
 
 handlers:
 - url: /static/
-  static_dir: content/themes/default/static
-
-- url: /uploads/
-  static_dir: content/uploads
-
-- url: /plugins/(?P<a>.+?)/(?P<b>.+)
-  static_files: content/plugins/\1/static/\2
-  upload: applications/(.+?)/static/(.+)
-  secure: optional
-  expiration: "90d"
-
-- url: /themes/(?P<a>.+?)/(?P<b>.+)
-  static_files: content/themes/\1/static/\2
-  upload: applications/(.+?)/static/(.+)
-  secure: optional
-  expiration: "90d"
+  static_dir: static
 
 - url: /.*
   script: gaehandler.py

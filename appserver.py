@@ -20,9 +20,8 @@ from blogus import run
 
 def apphandler(environ):
     """ Wrapper Function To Make Actual Call To The Application"""
-    request = Request(environ)
-    appserver = AppServer(request)
-    response = run(appserver)
+    appserver = AppServer(environ)
+    run(appserver)
     status, headers, output = appserver.response.get_response()
 
     httpoutput = ""
@@ -38,7 +37,7 @@ def apphandler(environ):
         headers.update({"Content-Type": "text/plain"})
         httpoutput += output.join(", ")
 
-    appserver.response.drop_write(httpoutput)
+    #appserver.response.drop_write(httpoutput)
 
     return status, headers, httpoutput
 
@@ -47,11 +46,10 @@ class AppServer(object):
     """
     Defines API For interacting With HTTP Server
     """
-    def __init__(self, request):
+    def __init__(self, environ):
         """ All Variables Go Here """
 
-        self.server = request.headers.pop("APP_SERVER")
-        self.request = request
+        self.request = Request(environ)
         self.response = Response()
 
 
@@ -129,4 +127,3 @@ class Response(object):
         self.output = output
         self.status = status
         self.headers.update(header)
-        

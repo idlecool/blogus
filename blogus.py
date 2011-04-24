@@ -38,16 +38,16 @@ class UrlHandler(object):
         self.getvars = parse_qs(appserver.request.headers.get("QUERY_STRING"))
         # sanitize GET vars
         for getvar in self.getvars.keys():
-            self.getvars[getvar] = escape(self.getvars[getvar])
-
+            for each in self.getvars[getvar]:
+                self.getvars[getvar].append(escape(each))
         # blogus url
         self.blogusurl = "%s/%s" % (self.httphost, self.scriptname)
 
         # all root level static files goes here
         if self.path in ("/favicon.ico", "/robots.txt"):
             appserver.response.set_header({
-                    "Location":"/themes/default%s" % self.path,
+                    "Location":"/static%s" % self.path,
                     })
             appserver.response.set_code(301)
         else:
-            pass
+            appserver.response.drop_write(self.path)
