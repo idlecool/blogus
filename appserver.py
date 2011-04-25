@@ -5,18 +5,19 @@ Proxy Between HTTP server and main Application
 """
 
 import os
+import cgi
+import urlparse
+import sys
+sys.path.insert(1, os.path.join(os.path.dirname(os.path.abspath(__file__)), "utils"))
 
-# include application's caller method
-# - import as run
-# - arguments
-#   - AppServer : AppServer object
-# - return values 
-#   - status  : response http status
-#   - headers : response http headers
-#   - output  : main output
-#
+
 from blogus import run
+import utils
 
+
+import tenjin
+from tenjin.helpers import *
+import tenjin.gae
 
 def apphandler(environ):
     """ Wrapper Function To Make Actual Call To The Application"""
@@ -37,8 +38,6 @@ def apphandler(environ):
         headers.update({"Content-Type": "text/plain"})
         httpoutput += output.join(", ")
 
-    #appserver.response.drop_write(httpoutput)
-
     return status, headers, httpoutput
 
 
@@ -50,7 +49,7 @@ class AppServer(object):
         """ All Variables Go Here """
 
         self.request = Request(environ)
-        self.response = Response()
+        self.response = Response(self.request)
 
 
 class Request(object):
@@ -78,19 +77,63 @@ class Request(object):
             "APP_SERVER" : environ.get("APP_SERVER"),
             "SERVER_PATH" : os.path.dirname(os.path.abspath(__file__)),
             }
+        self.hosturl = self.get_hosturl()
+        self.pathurl = self.get_pathurl()
+        self.getvars = self.get_getvars()
+        self.method = self.get_method()
+        self.hostprefix = self.headers.get("HTTP_HOST")
+        self.hostsuffix = self.headers.get("SCRIPT_NAME")
+        self.serverpath = self.get_serverpath()
+        self.appserver = self.headers.get("APP_SERVER")
 
+    def get_hosturl(self):
+        """ returns url on which the blog is hosted"""
+
+        return "http://%s%s" % (self.headers.get("HTTP_HOST"),
+                         self.headers.get("SCRIPT_NAME"))
+
+    def get_pathurl(self):
+        """ returns the requested path """
+
+        return self.headers.get("PATH_INFO")
+
+    def get_getvars(self):
+        querystring = self.headers.get("QUERY_STRING")
+        qs_dict = urlparse.parse_qs(querystring)
+        for eachkey in qs_dict.keys():
+            listt = qs_dict[eachkey]
+            qs_dict[eachkey] = []
+            for eachitem in listt:
+                qs_dict[eachkey].append(cgi.escape(eachitem))
+        return qs_dict
+
+    def get_method(self):
+        return self.headers.get("REQUEST_METHOD")
+
+    def get_serverpath(self):
+        return os.path.dirname(os.path.abspath(__file__))
 
 class Response(object):
     """
     HTTP Response Object
     """
-    def __init__(self):
+    def __init__(self, request):
         """ HTTP response varibles """
 
         self.headers = {"Content-Type": "text/html"
                         }
         self.status = 200
         self.output = ""
+        self._request = request
+        self._metadata = {
+            "hosturl": self._request.hosturl,
+            "navbar_links": [
+                ("blog","%s/blog" % self._request.hosturl),
+                ("github","https://github.com/idlecool"),
+                ("twitter", "http://twitter.com/idlecool"),
+                ("contact", "%s/contact" % self._request.hosturl),
+                ],
+            }
 
     def set_header(self, header):
         """
@@ -127,3 +170,14 @@ class Response(object):
         self.output = output
         self.status = status
         self.headers.update(header)
+
+    def render(self, template_name=None, template_data={}):
+
+        template_data["_metadata"] = self._metadata
+        if (self._request.appserver == "GAE"):
+            tenjin.gae.init()
+        views_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                 "views/")
+        engine = tenjin.Engine(path=[views_dir], layout='_layout.pyhtml')
+        output = engine.render(template_name, template_data)
+        self.drop_write(output)

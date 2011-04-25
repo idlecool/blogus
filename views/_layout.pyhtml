@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>${title}</title>
+    <link rel="icon" type="image/ico" href="#{_metadata["hosturl"]}/static/favicon.ico">
+    <link rel="stylesheet" href="#{_metadata["hosturl"]}/static/css/blueprint/screen.css" type="text/css" media="screen, projection"/>
+    <link rel="stylesheet" href="#{_metadata["hosturl"]}/static/css/blueprint/print.css" type="text/css" media="print"/> 
+    <!--[if lt IE 8]>
+	<link rel="stylesheet" href="#{_metadata["hosturl"]}/static/css/blueprint/ie.css" type="text/css" media="screen, projection"/>
+	<![endif]-->
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+    <style type="text/css">
+      html, body {
+	  background-color: #40362a;
+	  height: 100%;
+      }
+      h1, h2, h3, h4, h5, h6, p, div, span, a {
+	   color: #cc6949;
+	   font-family: Verdana;
+	   
+      }
+      a {
+	  text-decoration: none;
+      }
+      div.container {
+	  background-color: #53665a;
+	  min-height:100%;
+      }
+      div#header {
+      }
+      div#blogbody {
+	  min-height: 300px;
+      }
+      div#content {
+	  padding: 10px;
+	  float: left;
+	  width: 700px;
+	  border-right: 1px solid #993127;
+      }
+      div#sidebar {
+	  padding: 10px;
+	  float: left;
+	  width: 250px;
+      }
+      div#footer {
+    	  text-align: right;
+	  padding: 5px 20px;
+      }
+      div#footer a{
+	  padding: 0px;
+	  margin: 0px;
+      }
+      div.botpadding {
+	  width: 950px;
+	  height: 2px;
+      }
+      div#nav-bar {
+	  float: right;
+	  width: 400px;
+	  text-align: right;
+	  padding-right: 10px;
+	  padding-top: 5px;
+      }
+      a.navbarlinks {
+	  padding: 5px;
+	  margin: 0 5px;
+	  background-color: #993127;
+	  -webkit-border-radius: 3px;
+	  -moz-border-radius: 3px;
+	  border-radius: 3px;
+      }
+      a.navbarlinks:hover {
+	  color: #993127;
+	  background-color: #cc6949;
+      }
+      img.bannerimg {
+	  margin: 5px;
+      }
+    </style>
+    <?py if not captured_as('html_head'): ?>
+    <?py __placeholder="this is placeholder"?>
+    <?py #endif ?>
+  </head>
+  <body>
+    <div class="container">
+      <div id="header">
+	<?py if not captured_as('header'): ?>
+	<?py __placeholder="this is placeholder"?>
+	<?py #endif ?>
+	<img class="bannerimg" src="#{_metadata["hosturl"]}/static/images/banner.png"/>
+	<div id="nav-bar">
+	  <?py for eachlink in _metadata["navbar_links"]: ?>
+	  <a href="#{eachlink[1]}" target="_blank" class="navbarlinks">#{eachlink[0]}</a>
+	  <?py #endfor ?>
+	</div>
+      </div>
+      <img src="#{_metadata["hosturl"]}/static/images/hrline.png" />
+      <div id="blogbody">
+	<div id="content">
+	  #{_content}
+	</div>
+	<div id="sidebar">
+	  <?py if not captured_as('sidebar'): ?>
+	  <?py __placeholder="this is placeholder"?>
+	  <?py #endif ?>
+	</div>
+	<div class="bot-padding">
+	</div>
+      </div>
+      <img src="#{_metadata["hosturl"]}/static/images/hrline.png" />
+      <div id="footer">
+	<?py if not captured_as('footer'): ?>
+	<?py __placeholder="this is placeholder"?>
+	<?py #endif ?>
+	<a href="http://creativecommons.org/licenses/by-sa/3.0/"><img src="http://i.creativecommons.org/l/by-sa/3.0/88x31.png"/></a>
+      </div>
+    </div>
+  </body>
+</html>
