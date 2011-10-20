@@ -5,6 +5,7 @@ Proxy Between HTTP server and main Application
 """
 
 import os
+import re
 import cgi
 import urlparse
 import sys
@@ -13,11 +14,11 @@ sys.path.insert(1, os.path.join(os.path.dirname(os.path.abspath(__file__)), "uti
 
 from blogus import run
 import utils
+import config
 
-
-import tenjin
-from tenjin.helpers import *
-import tenjin.gae
+# import tenjin
+# from tenjin.helpers import *
+# import tenjin.gae
 
 def apphandler(environ):
     """ Wrapper Function To Make Actual Call To The Application"""
@@ -50,6 +51,11 @@ class AppServer(object):
 
         self.request = Request(environ)
         self.response = Response(self.request)
+        self.context = {}
+        for eachattr in dir(config):
+            if not re.match("__\S+__", eachattr):
+                self.context[eachattr] = getattr(config,
+                                                 eachattr)
 
 
 class Request(object):
@@ -59,7 +65,7 @@ class Request(object):
     def __init__(self, environ):
         self.environ = {}
         self.environ.update(environ)
-        self.headers = { 
+        self.headers = {
             "SCRIPT_NAME" : environ.get("SCRIPT_NAME"),
             "REQUEST_METHOD" : environ.get("REQUEST_METHOD"),
             "PATH_INFO" : environ.get("PATH_INFO"),
@@ -137,7 +143,7 @@ class Response(object):
 
     def set_header(self, header):
         """
-        Set HTTP response headers 
+        Set HTTP response headers
         """
 
         self.headers.update(header)
@@ -148,7 +154,7 @@ class Response(object):
         """
 
         self.status = status
-        
+
     def write(self, output):
         """
         write output chunk by chunk
@@ -171,13 +177,40 @@ class Response(object):
         self.status = status
         self.headers.update(header)
 
-    def render(self, template_name=None, template_data={}):
+    def render(self, context={}, view="base"):
 
-        template_data["_metadata"] = self._metadata
-        if (self._request.appserver == "GAE"):
-            tenjin.gae.init()
-        views_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                 "views/")
-        engine = tenjin.Engine(path=[views_dir], layout='_layout.pyhtml')
-        output = engine.render(template_name, template_data)
-        self.drop_write(output)
+        context["template_child"] = ""
+
+        f = open(os.path.join(config.INSTALLATION_PATH,
+                              "views",
+                              "%s.html" % view))
+        html = f.read()
+        f.close()
+
+        while html.startswith("{{ include"):
+            template_parent, template_child =\
+                html.split("\n", 1)
+            parent_view =\
+                re.findall("{{ include \S+ }}",
+                           template_parent)[0][11:-3]
+
+            context["template_child"] = template_child
+
+            f = open(os.path.join(config.INSTALLATION_PATH,
+                                  "views",
+                                  "%s.html" % parent_view))
+            html = f.read()
+            f.close()
+
+        varlist = re.findall("{{ \S+ }}", html)
+
+        replacement = {}
+        # remove duplicates
+        for eachvar in varlist:
+            replacement[eachvar] = ""
+
+        for eachkey in replacement.keys():
+            html = html.replace(eachkey,
+                                context[eachkey[3:-3]])
+
+        self.drop_write(html)
