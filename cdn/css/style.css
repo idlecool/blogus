@@ -107,8 +107,9 @@ body {
                                  text-align: left;
                                  }
 a {
-                 text-decoration: underline;
-                 }
+    color: #444;
+    text-decoration: underline;
+    }
 a:hover {
                        color: #777;
                        }
@@ -118,3 +119,8 @@ a:visited {
 .top-stories p {
                  margin-bottom: 4px;
                  }
+ul {
+     list-style-type:none;
+     padding: 0 20px;
+     margin-bottom: 40px;
+     }
