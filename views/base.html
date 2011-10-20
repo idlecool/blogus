@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ page_title }} - {{ site_title }}</title>
+    <link type="text/css" rel="stylesheet" href="{{ site_cdn_path }}/css/style.css">
+    <script type="text/javascript" src="{{ site_cdn_path }}/scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ site_cdn_path }}/scripts/main.js"></script>
+  </head>
+  <body style="background-image: url('{{ site_cdn_path }}/images/background.png')">
+    <div class="wrapper">
+      <div class="rssicon">
+	<!-- <img class="rssicon" src="{{ site_cdn_path }}/images/rss.svg"> -->
+      </div>
+      <div class="header">
+	<a href="{{ site_path }}"><p>{{ site_name }}</p></a>
+      </div> <!-- header -->
+      <div class="navpanel">
+	<span class="flexispan" style="background-image: url('{{ site_cdn_path }}/images/navpanel-bg.png');">
+	  <span class="catbutton"><a href="">essays</a></span> &#x2022;
+	  <span class="catbutton"><a href="">gallery</a></span> &#x2022;
+	  <span class="catbutton"><a href="">rants</a></span> &#x2022;
+	  <span class="catbutton"><a href="">stories</a></span>
+	</span>
+      </div> <!-- navpanel -->
+      <div id="content">
+	{{ template_child }}
+      </div> <!-- content -->
+      <div class="footer">
+	<a href="{{ site_path }}/rss"><img src="{{ site_cdn_path }}/images/rss.svg"></a>
+      </div> <!-- footer -->
+    </div>
+  </body>
+</html>
