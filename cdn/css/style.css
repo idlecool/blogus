@@ -20,9 +20,11 @@ body {
             margin-top: 0;
             padding-top: 0;
             }
-.header a:hover {
-            text-decoration: none;
-            }
+.header a, .header a:hover, .header a:visited {
+                                                text-decoration: none;
+                                                color: #444;
+                                                cursor: pointer;
+                                                }
 .navpanel {
             text-align: center;
             margin-bottom: 50px;
@@ -36,15 +38,16 @@ body {
 .navpanel .flexispan .catbutton {
                                   padding: 0px 5px;
                                   }
-a{
-   color: #666;
-   text-decoration: none;
-   cursor: pointer;
-   }
-a:hover {
-          cursor: pointer;
-          text-decoration: underline;
-          }
+.catbutton a, .catbutton a:visited {
+                                     color: #666;
+                                     text-decoration: none;
+                                     cursor: pointer;
+                                     }
+.catbutton a:hover {
+                     color: #666;
+                     cursor: pointer;
+                     text-decoration: underline;
+                     }
 
 .title {
          font-size: 26px;
@@ -103,13 +106,13 @@ a:hover {
                                  margin: 0;
                                  text-align: left;
                                  }
-.top-stories a {
+a {
                  text-decoration: underline;
                  }
-.top-stories a:hover {
+a:hover {
                        color: #777;
                        }
-.top-stories a:visited {
+a:visited {
                          color: #999;
                          }
 .top-stories p {
