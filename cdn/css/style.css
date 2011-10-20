@@ -103,6 +103,15 @@ a:hover {
                                  margin: 0;
                                  text-align: left;
                                  }
+.top-stories a {
+                 text-decoration: underline;
+                 }
+.top-stories a:hover {
+                       color: #777;
+                       }
+.top-stories a:visited {
+                         color: #999;
+                         }
 .top-stories p {
                  margin-bottom: 4px;
                  }

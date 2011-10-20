@@ -34,9 +34,13 @@ class UrlHandler(object):
                 context.update({"page_content": "nothing",
                                 "page_title": "Home"})
                 appserver.response.render(context=context, view="home")
+            elif appserver.request.pathurl.startswith("/list"):
+                context = appserver.context
+                context.update({"page_content": "nothing",
+                                "page_title": "List"})
+                appserver.response.render(context=context, view="list")
             else:
                 context = appserver.context
                 context.update({"page_content": "nothing",
                                 "page_title": "There is nothing like Python"})
                 appserver.response.render(context=context, view="post")
-
